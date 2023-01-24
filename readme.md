@@ -13,7 +13,8 @@ This API use the 7-zip dll (7z.dll) to read and write all 7-zip supported archiv
 ### Extract to path:
 
 ```pascal
- with CreateInArchive(CLSID_CFormatZip) do begin
+ with CreateInArchive(CLSID_CFormatZip) do 
+ begin
       OpenFile('c:\test.zip');   
       ExtractTo('c:\test'); 
  end;
@@ -22,19 +23,50 @@ This API use the 7-zip dll (7z.dll) to read and write all 7-zip supported archiv
 ### Get file list:
 
 ```
- with CreateInArchive(CLSID_CFormat7z) do begin   OpenFile('c:\test.7z');   for i := 0 to NumberOfItems - 1 do    if not ItemIsFolder[i] then      Writeln(ItemPath[i]); end;
+ with CreateInArchive(CLSID_CFormat7z) do 
+ begin
+      OpenFile('c:\test.7z');   
+      for i := 0 to NumberOfItems - 1 do    
+          if not ItemIsFolder[i] then writeln(ItemPath[i]); 
+ end;
 ```
 
 ### Extract to stream
 
 ```
- with CreateInArchive(CLSID_CFormat7z) do begin   OpenFile('c:\test.7z');   for i := 0 to NumberOfItems - 1 do     if not ItemIsFolder[i] then       ExtractItem(i, stream, false); end;
+ with CreateInArchive(CLSID_CFormat7z) do 
+ begin   
+      OpenFile('c:\test.7z');   
+      for i := 0 to NumberOfItems - 1 do     
+          if not ItemIsFolder[i] then ExtractItem(i, stream, false); 
+ end;
 ```
 
 ### Extract "n" Items
 
 ```
-function GetStreamCallBack(sender: Pointer; index: Cardinal;  var outStream: ISequentialOutStream): HRESULT; stdcall;begin  case index of ...    outStream := T7zStream.Create(aStream, soReference);  Result := S_OK;end;procedure TMainForm.ExtractClick(Sender: TObject);var  i: integer;  items: array[0..2] of Cardinal;begin  with CreateInArchive(CLSID_CFormat7z) do  begin    OpenFile('c:\test.7z');
+function GetStreamCallBack (     sender    : Pointer; 
+                                 index     : Cardinal;  
+                             var outStream : ISequentialOutStream) : HRESULT; stdcall;
+begin  
+     case index of ...    
+          outStream := T7zStream.Create(aStream, soReference);  
+     Result := S_OK;
+end;
+
+procedure TMainForm.ExtractClick(Sender: TObject);
+var   
+     items : array[0..2] of Cardinal = (0,1,2);
+begin  
+     with CreateInArchive(CLSID_CFormat7z) do  
+     begin
+          OpenFile('c:\test.7z');   // items must be sorted by index!
+          //items[0] := 0;
+          //items[1] := 1;
+          //items[2] := 2;
+          ExtractItems(@items, Length(items), false, nil, GetStreamCallBack);
+     end;
+end;
 ```
 
 ### Open stream
