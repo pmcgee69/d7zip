@@ -12,8 +12,11 @@ This API use the 7-zip dll (7z.dll) to read and write all 7-zip supported archiv
 
 ### Extract to path:
 
-```
- with CreateInArchive(CLSID_CFormatZip) do begin   OpenFile('c:\test.zip');   ExtractTo('c:\test'); end;
+```pascal
+ with CreateInArchive(CLSID_CFormatZip) do begin
+      OpenFile('c:\test.zip');   
+      ExtractTo('c:\test'); 
+ end;
 ```
 
 ### Get file list:
